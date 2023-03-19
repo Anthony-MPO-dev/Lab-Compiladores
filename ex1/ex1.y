@@ -1,10 +1,11 @@
 %{ 
-    #include <stdio.h>
-    int yylex(void); 
-    void yyerror(char *); 
-%} 
-%token INTEGER 
-%left '+' '-' '*' '/' ')' '('
+        #include <stdio.h>
+        int yylex(void); 
+        void yyerror(char *); 
+%}
+
+%token INTEGER
+%left '+''-''*''/'')''('
 %% 
 
 /*
@@ -16,24 +17,29 @@
         NUM --> 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
         }
 */ 
-program: 
-        program expr '\n'       { printf("%d\n", $2); } 
-        | '(' expr ')' '\n'          { printf("(%d)\n", $2);}
-	| /* Empty */ 
+P: 
+        E'\n'       { printf("%d\n", $2); }
         ; 
-expr: 
-        INTEGER                 { $$ = $1; } 
-	| expr '+' expr		{ $$ = $1 + $3; } 
-	| expr '-' expr         { $$ = $1 - $3; }
-        | expr '*' expr		{ $$ = $1 * $3; } 
-        | expr '/' expr		{ $$ = $1 * $3; }  
-        ; 
+E: 
+        E '+' T		{ $$ = $1 + $3; } 
+	| E '-' T       { $$ = $1 - $3; }
+        | T             
+        ;               
+T:      
+        T '*' F		{ $$ = $1 * $3; } 
+        | T '/' F	{ $$ = $1 / $3; }
+        | F  
+        ;
+F:      
+        '(' E ')' '\n'       { printf("(%d)\n", $2);}
+        |INTEGER             { $$ = $1; } 
+        ;
 %% 
 void yyerror(char *s) { 
-    printf( "%s\n", s); 
+        printf( "%s\n", s); 
 } 
 
 int main(void) { 
-    yyparse(); 
-    return 0; 
+        yyparse(); 
+        return 0; 
 } 
