@@ -9,6 +9,15 @@
 %left '+''-'
 %left '*''/'
 %left '('')'
+
+%union {
+  struct variable {
+    char code[2048];
+    char name[32];
+    } var;
+
+};
+
 %% 
 
 program: 
@@ -37,6 +46,8 @@ F:
         | INTEGER            { $$ = $1; } 
         ;
 %% 
+
+
 void yyerror(char *s) { 
         printf( "%s\n", s); 
 } 
