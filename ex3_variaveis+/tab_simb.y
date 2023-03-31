@@ -1,26 +1,13 @@
 %token INTEGER VARIABLE 
-%type  program statement expr 
 %left '+' '-' 
-%left '*' '/'
-%left '('')' 
-
-%{ 
-        #include <stdlib.h> 
-        #include <stdio.h>
-        void yyerror(char *); 
-        int yylex(void); 
-        int sym[26]; 
+%left '*' '/' 
+%{
+    #include <stdlib.h> 
+    #include <stdio.h>
+    void yyerror(char *); 
+    int yylex(void); 
+    int sym[1024]; 
 %}
-
-
-
-%union {
-        struct variable {
-                char code[2048];
-                char name[32];
-        } var;
-
-};
 
 %% 
 
@@ -29,7 +16,7 @@ program:
         |  
         ; 
 statement: 
-        expr                      { printf("%d\n", $1); } 
+        expr                      { printf("%d\n", $1); }
         | VARIABLE '=' expr       { printf("Atribuicao: idx_var=%d <- %d\n", $1, $3); sym[$1] = $3; } 
         ; 
 expr: 
@@ -44,11 +31,11 @@ expr:
 %% 
 
 void yyerror(char *s) { 
-        printf("%s\n", s); 
-        //return 0; 
+    printf("%s\n", s); 
+    //return 0; 
 } 
 
 int main(void) { 
-        yyparse(); 
-        return 0; 
+    yyparse(); 
+    return 0; 
 } 
