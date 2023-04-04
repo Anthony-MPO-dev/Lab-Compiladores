@@ -1,0 +1,8 @@
+var a: int;
+var b: int;
+var c: int;
+{ 
+ read a;
+ read b;
+ write a;
+}
