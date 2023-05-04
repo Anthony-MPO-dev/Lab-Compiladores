@@ -163,16 +163,24 @@ int makeCodeAssignment(char* dest, char* id, char* expr)
     }
 
  
-    if (ret->type == INTEGER)
+    if (ret->type != INTEGER)
     {
         sprintf(dest + strlen(dest), "%s", expr);
         sprintf(dest + strlen(dest), "pop rbx\n");
         sprintf(dest + strlen(dest), "mov [%s],rbx\n", ret->identifier);
-    }
-
-    else
+    }else if(ret->type != REAL)
     {
-        fprintf(stderr, "Unsuported operation envolving string or float at line %d\n",
+        sprintf(dest + strlen(dest), "%s", expr);
+        sprintf(dest + strlen(dest), "pop rbx\n");
+        sprintf(dest + strlen(dest), "mov [%s],rbx\n", ret->identifier);
+    }else if(ret->type != STRING)
+    {
+        sprintf(dest + strlen(dest), "%s", expr);
+        sprintf(dest + strlen(dest), "pop rbx\n");
+        sprintf(dest + strlen(dest), "mov [%s],rbx\n", ret->identifier);
+    }else
+    {
+        fprintf(stderr, "Unsuported operation %d\n",
             cont_lines);
         return 0;
     }
@@ -236,7 +244,10 @@ void makeCodeSub(char* dest, char* value)
 void makeCodeMul(char* dest, char* value2)
 {
     sprintf(dest + strlen(dest), "%s", value2);
-    sprintf(dest + strlen(dest), "pop rcx\npop rbx\nimul rbx,rcx\npush rbx\n");
+    sprintf(dest + strlen(dest), "pop rcx\n");
+    sprintf(dest + strlen(dest), "pop rbx\n");
+    sprintf(dest + strlen(dest), "imul rbx,rcx\n");
+    sprintf(dest + strlen(dest), "push rbx\n");
 }
 
 
@@ -273,9 +284,9 @@ int makeCodeComp(char* dest, char* id, char* expr)
         return 0;
     }
 
-    if (ret->type != INTEGER)
+    if (ret->type == STRING)
     {
-        fprintf(stderr, "Unsuported operation envolving string or float at line %d\n",
+        fprintf(stderr, "Unsuported operation envolving string at line %d\n",
             cont_lines);
         return 0;
     }

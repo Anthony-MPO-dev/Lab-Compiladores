@@ -1,12 +1,15 @@
 float x = 10.0;
 float y = 10.0;
-float total ;
-float media ;
+float t;
+float total = 0.0;
+float media = 0.0;
 int impar ;
 
 {
     read ( x ) ;
     read ( y ) ;
+
+    t = x;
 
     total = x + y ;
     media = total / 2 ;

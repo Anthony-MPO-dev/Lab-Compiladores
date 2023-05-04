@@ -281,7 +281,18 @@ expressao_booleana: ID operador_relacional expressao_numerica  {
 
 operador_relacional: '<'   { $$.op = -4; }
 	| '>'                  { $$.op = -3; }
-	| LE                   { $$.op = 3; }intt_lines);
+	| LE                   { $$.op = 3; }
+	| GE                   { $$.op = 4; }
+	| EQ                   { $$.op = -2; }
+	| NE                   { $$.op = 2; }
+;
+
+%%
+
+void yyerror(char *s)
+{
+   fprintf(stderr, "Error: %s at line %d", s, cont_lines);
    fprintf(stderr, "\n");
 }
+
 
