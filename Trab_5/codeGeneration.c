@@ -163,17 +163,17 @@ int makeCodeAssignment(char* dest, char* id, char* expr)
     }
 
  
-    if (ret->type != INTEGER)
+    if (ret->type == INTEGER)
     {
         sprintf(dest + strlen(dest), "%s", expr);
         sprintf(dest + strlen(dest), "pop rbx\n");
         sprintf(dest + strlen(dest), "mov [%s],rbx\n", ret->identifier);
-    }else if(ret->type != REAL)
+    }else if(ret->type == REAL)
     {
         sprintf(dest + strlen(dest), "%s", expr);
         sprintf(dest + strlen(dest), "pop rbx\n");
         sprintf(dest + strlen(dest), "mov [%s],rbx\n", ret->identifier);
-    }else if(ret->type != STRING)
+    }else if(ret->type == STRING)
     {
         sprintf(dest + strlen(dest), "%s", expr);
         sprintf(dest + strlen(dest), "pop rbx\n");
