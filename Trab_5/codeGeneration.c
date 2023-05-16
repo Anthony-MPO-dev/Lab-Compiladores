@@ -70,7 +70,7 @@ void dumpCodeDeclarationEnd()
 
 
 // Codigo para leitura (scanf)
-int makeCodeRead(char* dest, char *id)
+int makeCodeRead(SymTable *table, char* dest, char *id)
 {
     SymTableEntry* ret = findSymTable(&table,id);
     
@@ -110,7 +110,7 @@ int makeCodeRead(char* dest, char *id)
 
 
 // Codigo para escrita (printf)
-int makeCodeWrite(char* dest, char *id, int ln)
+int makeCodeWrite(SymTable *table, char* dest, char *id, int ln)
 {
     SymTableEntry* ret = findSymTable(&table,id);
     
@@ -151,7 +151,7 @@ int makeCodeWrite(char* dest, char *id, int ln)
 
 
 
-int makeCodeAssignment(char* dest, char* id, char* expr)
+int makeCodeAssignment(SymTable *table, char* dest, char* id, char* expr)
 {   
     SymTableEntry* ret = findSymTable(&table, id);
     dest[0] = '\0';
@@ -189,10 +189,7 @@ int makeCodeAssignment(char* dest, char* id, char* expr)
 }
 
 
-
-
-
-int makeCodeLoad(char* dest, char* id, int ref)
+int makeCodeLoad(SymTable *table, char* dest, char* id, int ref)
 {
     dest[0] = '\0';
 
@@ -273,7 +270,7 @@ void makeCodeMod(char* dest, char* value2)
 }
 
 
-int makeCodeComp(char* dest, char* id, char* expr)
+int makeCodeComp(SymTable *table, char* dest, char* id, char* expr)
 {
     SymTableEntry* ret = findSymTable(&table, id);
     dest[0] = '\0';

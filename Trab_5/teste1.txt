@@ -4,6 +4,7 @@ float t;
 float total = 0.0;
 float media = 0.0;
 int impar ;
+string facul= "UFMT";
 
 {
     read ( x ) ;

@@ -7,7 +7,16 @@
     void yyerror(char*);
     int yylex();
 
-    extern SymTable table;
+    extern SymTable global_table;
+	extern SymTable local_table;
+	initSymTable(&global_table);
+
+	initSymTable(&local_table);
+
+	
+	int flag_global_table;
+	flag_global_table = 1;
+
 
     char s_decs[256];
 
@@ -68,46 +77,67 @@ declaracao: declaracao_inteiro { strcpy($$.str, $1.str); }
 
 
 declaracao_inteiro: INT ID '=' NUM_INT ';'  {
-	
-		addSymTable(&table, INTEGER, $2.str, $4.str);
+		if(flag_global_table) 
+			addSymTable(&global_table, INTEGER, $2.str, $4.str);
+		else
+			addSymTable(&local_table, INTEGER, $2.str, $4.str);
+		
 		makeCodeDeclaration($$.str, INTEGER, $2.str, $4.str);
 	}
 
 	| INT ID ';'  {
+		if(flag_global_table)
+			addSymTable(&global_table, INTEGER, $2.str, NULL);
+		else
+			addSymTable(&local_table, INTEGER, $2.str, NULL);
 		
-		addSymTable(&table, INTEGER, $2.str, NULL);
 		makeCodeDeclaration($$.str, INTEGER, $2.str, NULL);
 	}
 ;
 
 
 declaracao_float: FLOAT ID '=' NUM_FLOAT ';'  {
-		addSymTable(&table, REAL, $2.str, $4.str);
+		if(flag_global_table) 
+			addSymTable(&global_table, REAL, $2.str, $4.str);
+		else
+			addSymTable(&local_table, REAL, $2.str, $4.str);
+		
 		makeCodeDeclaration($$.str, REAL, $2.str, $4.str);
 	}
 
 	| FLOAT ID ';'  {
-		addSymTable(&table, REAL, $2.str, NULL);
+		if(flag_global_table)
+			addSymTable(&global_table, REAL, $2.str, NULL);
+		else
+			addSymTable(&local_table, REAL, $2.str, NULL);
+
 		makeCodeDeclaration($$.str, REAL, $2.str, NULL);
 	}
 ;
 
 
 declaracao_string: STR ID '=' LITERAL_STR ';'  {
+		if(flag_global_table)
+			addSymTable(&global_table, STRING, $2.str, $4.str);
+		else
+			addSymTable(&local_table, STRING, $2.str, $4.str);
 
-		addSymTable(&table, STRING, $2.str, $4.str);
 		makeCodeDeclaration($$.str, STRING, $2.str, $4.str);
 	}
 
 	| STR ID ';'  {
-		addSymTable(&table, STRING, $2.str, NULL);
+		if(flag_global_table)
+			addSymTable(&global_table, STRING, $2.str, NULL);
+		else
+			addSymTable(&local_table, STRING, $2.str, NULL);
+
 		makeCodeDeclaration($$.str, STRING, $2.str, NULL);
 	}
 ;
 
 
 bloco : '{' comandos '}'  {
-
+		flag_global_table = 0;
 		strcpy($$.str, $2.str);
 	}
 ;
