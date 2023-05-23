@@ -9,9 +9,6 @@
 
     extern SymTable global_table;
 	extern SymTable local_table;
-	initSymTable(&global_table);
-
-	initSymTable(&local_table);
 
 	
 	int flag_global_table;
@@ -121,7 +118,7 @@ declaracao_string: STR ID '=' LITERAL_STR ';'  {
 			addSymTable(&global_table, STRING, $2.str, $4.str);
 		else
 			addSymTable(&local_table, STRING, $2.str, $4.str);
-
+		
 		makeCodeDeclaration($$.str, STRING, $2.str, $4.str);
 	}
 
@@ -152,9 +149,10 @@ comandos : comando comandos  {
 ;
 
 
-comando: comando_escrita      { strcpy($$.str, $1.str); }
+comando: declaracao 	  { printf("DECLARACAO Local\n"); }
+	|comando_escrita      { strcpy($$.str, $1.str); }
 	| comando_leitura         { strcpy($$.str, $1.str); }
-	| comando_atribuicao      { strcpy($$.str, $1.str); }
+	| comando_atribuicao      { printf("atribuicao: \n"); /*strcpy($$.str, $1.str);*/ }
 	| comando_se              { strcpy($$.str, $1.str); }
 	| comando_se_senao        { strcpy($$.str, $1.str); }
 	| comando_enquanto        { strcpy($$.str, $1.str); }
@@ -162,28 +160,48 @@ comando: comando_escrita      { strcpy($$.str, $1.str); }
 
 
 comando_leitura: READ '('ID')' ';'  {
-		
-		if (!makeCodeRead($$.str, $3.str))
-			YYABORT;
+	if(flag_global_table)
+		if (!makeCodeRead(&global_table, $$.str, $3.str))
+				YYABORT;
+	else
+		if (!makeCodeRead(&local_table, $$.str, $3.str))
+				YYABORT;
 	}
 ;
 
 
 comando_escrita: WRITE '('ID')' ';'  {
-
-		if (!makeCodeWrite($$.str, $3.str, 0))
-			YYABORT;
+		if(flag_global_table)
+			if (!makeCodeWrite(&global_table, $$.str, $3.str, 0))
+				YYABORT;
+		else
+			if (!makeCodeWrite(&local_table, $$.str, $3.str, 0))
+				YYABORT;
 	}
 
 	| WRITELN '('ID')' ';'  {
 
-		if (!makeCodeWrite($$.str, $3.str, 1))
-			YYABORT;
+		if(flag_global_table)
+			if (!makeCodeWrite(&global_table, $$.str, $3.str, 1))
+				YYABORT;
+		else
+			if (!makeCodeWrite(&local_table, $$.str, $3.str, 1))
+				YYABORT;
 	}
 ;
 
 
-comando_atribuicao: ID '=' expressao_numerica ';'  {
+comando_atribuicao: ID '=' NUM_INT ';'  {
+		printf("DEGUB");
+		if (!makeCodeAssignment($$.str, $1.str, $3.str))
+			YYABORT;
+	}
+	| ID '=' expressao_numerica ';'  {
+		
+		if (!makeCodeAssignment($$.str, $1.str, $3.str))
+			YYABORT;
+	}
+	|ID '=' LITERAL_STR ';'  {
 		
 		if (!makeCodeAssignment($$.str, $1.str, $3.str))
 			YYABORT;

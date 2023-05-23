@@ -363,7 +363,7 @@ static yyconst short int yy_def[75] =
 
 static yyconst short int yy_nxt[124] =
     {   0,
-        4,    5,    6,    7,    4,    8,    9,   10,   11,   12,
+        4,    5,    6,    7,    5,    8,    9,   10,   11,   12,
        13,   14,   15,   16,    4,   16,   16,   17,   18,   16,
        16,   19,   16,   16,   16,   20,   21,   16,   22,   36,
        40,   45,   46,   26,   37,   41,   45,   46,   57,   46,
@@ -754,13 +754,14 @@ case 11:
 YY_RULE_SETUP
 #line 71 "lexico.l"
 {
+	printf("Lexic: digit found\n");
 	strcpy(yylval.c.str, yytext);
 	return NUM_INT;
 }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 76 "lexico.l"
+#line 77 "lexico.l"
 {
 	strcpy(yylval.c.str, yytext);
 	return NUM_FLOAT;
@@ -768,7 +769,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 82 "lexico.l"
+#line 83 "lexico.l"
 {
 	printf("Lexic: id found\n");
 	strcpy(yylval.c.str, yytext);
@@ -777,7 +778,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 88 "lexico.l"
+#line 89 "lexico.l"
 {
 	printf("Lexic: literal_string found\n");
 	strcpy(yylval.c.str, yytext);
@@ -786,7 +787,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 94 "lexico.l"
+#line 95 "lexico.l"
 {
 	printf("Lexic: LE found\n");
 	strcpy(yylval.c.str, yytext);
@@ -795,7 +796,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 100 "lexico.l"
+#line 101 "lexico.l"
 {
 	printf("Lexic: == found\n");
 	strcpy(yylval.c.str, yytext);
@@ -804,7 +805,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 106 "lexico.l"
+#line 107 "lexico.l"
 {
 	printf("Lexic: GE found\n");
 	strcpy(yylval.c.str, yytext);
@@ -813,7 +814,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 112 "lexico.l"
+#line 113 "lexico.l"
 {
 	printf("Lexic: NE found\n");
 	strcpy(yylval.c.str, yytext);
@@ -822,7 +823,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 120 "lexico.l"
+#line 121 "lexico.l"
 {
 	printf("Lexic: %c found\n", *yytext);
 	//strcpy(yylval.str, yytext);
@@ -831,30 +832,30 @@ YY_RULE_SETUP
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 127 "lexico.l"
+#line 128 "lexico.l"
 { }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 129 "lexico.l"
+#line 130 "lexico.l"
 { cont_lines++; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 130 "lexico.l"
+#line 131 "lexico.l"
 { cont_lines++; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 133 "lexico.l"
+#line 134 "lexico.l"
 { yyerror("Invalid character"); }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 135 "lexico.l"
+#line 136 "lexico.l"
 ECHO;
 	YY_BREAK
-#line 858 "lex.yy.c"
+#line 859 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1744,7 +1745,7 @@ int main()
 	return 0;
 	}
 #endif
-#line 135 "lexico.l"
+#line 136 "lexico.l"
 
 
 int yywrap (void)

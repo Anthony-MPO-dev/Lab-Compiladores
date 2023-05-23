@@ -72,7 +72,7 @@ void dumpCodeDeclarationEnd()
 // Codigo para leitura (scanf)
 int makeCodeRead(SymTable *table, char* dest, char *id)
 {
-    SymTableEntry* ret = findSymTable(&table,id);
+    SymTableEntry* ret = findSymTable(table,id);
     
     dest[0] = '\0';
 
@@ -112,7 +112,7 @@ int makeCodeRead(SymTable *table, char* dest, char *id)
 // Codigo para escrita (printf)
 int makeCodeWrite(SymTable *table, char* dest, char *id, int ln)
 {
-    SymTableEntry* ret = findSymTable(&table,id);
+    SymTableEntry* ret = findSymTable(table,id);
     
     dest[0] = '\0';
 
@@ -151,30 +151,40 @@ int makeCodeWrite(SymTable *table, char* dest, char *id, int ln)
 
 
 
-int makeCodeAssignment(SymTable *table, char* dest, char* id, char* expr)
+int makeCodeAssignment(char* dest, char* id, char* expr)
 {   
-    SymTableEntry* ret = findSymTable(&table, id);
+    SymTableEntry *ret;
+
+    ret = findSymTable(&local_table, id);
     dest[0] = '\0';
 
     if (ret == NULL)
     {
-        fprintf(stderr, "Error: %s not recognized at line %d\n", id, cont_lines);
-        return 0;
-    }
+        // Se não encontrar, verifica a tabela de simbolos global
+        ret = findSymTable(&global_table, id);
 
+        if (ret == NULL){
+            fprintf(stderr, "Error: %s not recognized at line %d\n", id, cont_lines);
+            return 0;
+        }
+    }
+		
  
     if (ret->type == INTEGER)
     {
+        printf("ATRIBUICAO DE INTEIRO");
         sprintf(dest + strlen(dest), "%s", expr);
         sprintf(dest + strlen(dest), "pop rbx\n");
         sprintf(dest + strlen(dest), "mov [%s],rbx\n", ret->identifier);
     }else if(ret->type == REAL)
     {
+        printf("ATRIBUICAO DE REAL");
         sprintf(dest + strlen(dest), "%s", expr);
         sprintf(dest + strlen(dest), "pop rbx\n");
         sprintf(dest + strlen(dest), "mov [%s],rbx\n", ret->identifier);
     }else if(ret->type == STRING)
     {
+        printf("ATRIBUICAO DE LITERAL_STRING");
         sprintf(dest + strlen(dest), "%s", expr);
         sprintf(dest + strlen(dest), "pop rbx\n");
         sprintf(dest + strlen(dest), "mov [%s],rbx\n", ret->identifier);
@@ -189,7 +199,7 @@ int makeCodeAssignment(SymTable *table, char* dest, char* id, char* expr)
 }
 
 
-int makeCodeLoad(SymTable *table, char* dest, char* id, int ref)
+int makeCodeLoad(char* dest, char* id, int ref)
 {
     dest[0] = '\0';
 
@@ -200,12 +210,21 @@ int makeCodeLoad(SymTable *table, char* dest, char* id, int ref)
         return 1;
     }
 
-    SymTableEntry* ret = findSymTable(&table, id);
+    // Verifica primeiro tabela de simbolos local
+    SymTableEntry *ret; 
+    ret = findSymTable(&local_table, id);
 
     if (ret == NULL)
     {
-        fprintf(stderr, "Error: %s not recognized at line %d\n", id, cont_lines);
-        return 0;
+        
+        // Se não encontrar, verifica a tabela de simbolos global
+        ret = findSymTable(&global_table, id);
+
+        if (ret == NULL){
+            fprintf(stderr, "Error: %s not recognized at line %d\n", id, cont_lines);
+            return 0;
+        }
+
     }
 
     if (ret->type == STRING)
@@ -270,15 +289,22 @@ void makeCodeMod(char* dest, char* value2)
 }
 
 
-int makeCodeComp(SymTable *table, char* dest, char* id, char* expr)
+int makeCodeComp(char* dest, char* id, char* expr)
 {
-    SymTableEntry* ret = findSymTable(&table, id);
+    SymTableEntry *ret; 
+    ret = findSymTable(&local_table, id);
     dest[0] = '\0';
 
     if (ret == NULL)
     {
-        fprintf(stderr, "Error: %s not recognized at line %d\n", id, cont_lines);
-        return 0;
+         // Se não encontrar, verifica a tabela de simbolos global
+        ret = findSymTable(&global_table, id);
+
+        if (ret == NULL){
+            fprintf(stderr, "Error: %s not recognized at line %d\n", id, cont_lines);
+            return 0;
+        }
+
     }
 
     if (ret->type == STRING)

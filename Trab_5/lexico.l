@@ -6,7 +6,7 @@
 	void yyerror(char *); 
 %}
 
-ws [\t]
+ws [\t ]
 letter [A-Za-z]
 digit [0-9]
 
@@ -69,6 +69,7 @@ digit [0-9]
 }
 
 {digit}+ {
+	printf("Lexic: digit found\n");
 	strcpy(yylval.c.str, yytext);
 	return NUM_INT;
 }

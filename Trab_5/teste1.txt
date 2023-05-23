@@ -1,34 +1,42 @@
-float x = 10.0;
-float y = 10.0;
-float t;
-float total = 0.0;
-float media = 0.0;
-int impar ;
-string facul= "UFMT";
+float total;
+float media;
+int impar;
+string empresa;
 
 {
-    read ( x ) ;
-    read ( y ) ;
 
-    t = x;
+    string nome;
+    float x;
+    float y;
+    x = 10;
+    empresa = "UFMT " ;
 
-    total = x + y ;
-    media = total / 2 ;
+    write("Escreva seu nome:");
+    read(nome);
+    read(x);
+    read(y);
+    total = x + y;
+    media = total / 2;
+    impar = 0;
+    while(total > 0 ) {
 
-    write ( media ) ;
-
-    impar = 0 ;
-    
-    while ( total > 0 ) {
-        
         if ( impar == 0 ) {
             impar = 1 ;
         } else {
             impar = 0 ;
         }
-        
-        total = total -1;
-    
+        total = total – 1 ;
     }
-    write ( impar ) ;
+
+    write(empresa);
+    write(nome);
+    write("Sua media eh:");
+    write(media);
+    write ("Seu numero eh ");
+    if ( impar == 1 ) {
+        write( “impar” );
+    } else {
+        write ( “par” ) ;
+    }
+
 }
