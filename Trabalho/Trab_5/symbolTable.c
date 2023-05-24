@@ -257,3 +257,4 @@ void freeSymTable(SymTable* table)
 //         tab[i].next = NULL;
 //     }
 // }
+

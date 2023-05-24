@@ -6,7 +6,7 @@
 	void yyerror(char *); 
 %}
 
-ws [\t ]
+ws [ \t]
 letter [A-Za-z]
 digit [0-9]
 
@@ -69,7 +69,6 @@ digit [0-9]
 }
 
 {digit}+ {
-	printf("Lexic: digit found\n");
 	strcpy(yylval.c.str, yytext);
 	return NUM_INT;
 }
@@ -80,16 +79,10 @@ digit [0-9]
 }
 
 
-{letter}({letter}|{digit}|_)* {
+{letter}({letter}|{digit}|_)*	{
 	printf("Lexic: id found\n");
 	strcpy(yylval.c.str, yytext);
 	return ID;
-}
-
-["]{letter}({letter}|{digit}|[-;:={}+*()<>/%]|[ ]|_)*["] {
-	printf("Lexic: literal_string found\n");
-	strcpy(yylval.c.str, yytext);
-	return LITERAL_STR;
 }
 
 "<="	{
@@ -118,7 +111,7 @@ digit [0-9]
 
 
 
-[-;:={}+*()<>/%"] {
+[-;:={}+*()<>/%] {
 	printf("Lexic: %c found\n", *yytext);
 	//strcpy(yylval.str, yytext);
 	return *yytext;

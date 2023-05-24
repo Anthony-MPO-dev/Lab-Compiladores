@@ -72,18 +72,14 @@ void dumpCodeDeclarationEnd()
 // Codigo para leitura (scanf)
 int makeCodeRead(char* dest, char *id)
 {
-    SymTableEntry* ret = findSymTable(&local_table,id);
+    SymTableEntry* ret = findSymTable(&table,id);
+    
     dest[0] = '\0';
 
     if (ret == NULL)
     {
-        // Se não encontrar, verifica a tabela de simbolos global
-        ret = findSymTable(&global_table, id);
-
-        if (ret == NULL){
-            fprintf(stderr, "Error[impossible to read]: %s is not readable at line %d not found variable in the symtable\n", id, cont_lines);
-            return 0;
-        }
+        fprintf(stderr, "Error: %s not recognized at line %d\n", id, cont_lines);
+        return 0;
     }
 
     if (ret->type == INTEGER)
@@ -116,18 +112,14 @@ int makeCodeRead(char* dest, char *id)
 // Codigo para escrita (printf)
 int makeCodeWrite(char* dest, char *id, int ln)
 {
-    SymTableEntry* ret = findSymTable(&local_table,id);
+    SymTableEntry* ret = findSymTable(&table,id);
+    
     dest[0] = '\0';
 
     if (ret == NULL)
     {
-        // Se não encontrar, verifica a tabela de simbolos global
-        ret = findSymTable(&global_table, id);
-
-        if (ret == NULL){
-            fprintf(stderr, "Error[impossible to write variable]: %s is not readable at line %d not found variable in the symtable\n", id, cont_lines);
-            return 0;
-        }
+        fprintf(stderr, "Error: %s not recognized at line %d\n", id, cont_lines);
+        return 0;
     }
 
     if (ret->type == INTEGER)
@@ -157,71 +149,35 @@ int makeCodeWrite(char* dest, char *id, int ln)
     return 1;
 }
 
-int makeCodeWrite0(char* dest, char *value, int ln){
-    dest[0] = '\0';
-
-    if (ln) sprintf(dest + strlen(dest), "mov rdi,fmt_sln\n");
-    else sprintf(dest + strlen(dest), "mov rdi,fmt_s\n");
-    sprintf(dest + strlen(dest), "mov rsi,%s\n", value);
-    
-
-    sprintf(dest + strlen(dest), "mov rax,0\n");
-    sprintf(dest + strlen(dest), "call printf\n");
-
-    return 1;
-}
 
 
-
-int makeCodeAssignment(char* dest, char* id, char* expr, int typeValue)
+int makeCodeAssignment(char* dest, char* id, char* expr)
 {   
-    SymTableEntry *ret;
-
-    ret = findSymTable(&local_table, id);
+    SymTableEntry* ret = findSymTable(&table, id);
     dest[0] = '\0';
 
     if (ret == NULL)
     {
-        // Se não encontrar, verifica a tabela de simbolos global
-        ret = findSymTable(&global_table, id);
-
-        if (ret == NULL){
-            fprintf(stderr, "Error: %s not recognized at line %d\n", id, cont_lines);
-            return 0;
-        }
+        fprintf(stderr, "Error: %s not recognized at line %d\n", id, cont_lines);
+        return 0;
     }
-	
-    if (typeValue == 0) {
 
-        if (ret->type == INTEGER)
-        {   
-            printf("ATRIBUICAO DE INTEIRO\n");
-            sprintf(dest + strlen(dest), "%s", expr);
-            sprintf(dest + strlen(dest), "pop rbx\n");
-            sprintf(dest + strlen(dest), "mov [%s],rbx\n", ret->identifier);
-        }else if(ret->type == REAL)
-        {
-            printf("ATRIBUICAO DE REAL\n");
-            sprintf(dest + strlen(dest), "%s", expr);
-            sprintf(dest + strlen(dest), "pop rbx\n");
-            sprintf(dest + strlen(dest), "mov [%s],rbx\n", ret->identifier);
-        }else{
-            fprintf(stderr, "ERROR[Variable type does not match the provided value] on line %d\n",
-            cont_lines);
-            return 0;
-        }
-    }else if (typeValue == 1){
-        if(ret->type == STRING)
-            {
-            printf("ATRIBUICAO DE LITERAL_STRING\n");
-            sprintf(dest + strlen(dest), "%s", expr);
-            sprintf(dest + strlen(dest), "pop rbx\n");
-            sprintf(dest + strlen(dest), "mov [%s],rbx\n", ret->identifier);
-        }else{
-            fprintf(stderr, "ERROR[Variable type does not match the provided value] on line %d\n",
-            cont_lines);
-            return 0;
-        }
+ 
+    if (ret->type == INTEGER)
+    {
+        sprintf(dest + strlen(dest), "%s", expr);
+        sprintf(dest + strlen(dest), "pop rbx\n");
+        sprintf(dest + strlen(dest), "mov [%s],rbx\n", ret->identifier);
+    }else if(ret->type == REAL)
+    {
+        sprintf(dest + strlen(dest), "%s", expr);
+        sprintf(dest + strlen(dest), "pop rbx\n");
+        sprintf(dest + strlen(dest), "mov [%s],rbx\n", ret->identifier);
+    }else if(ret->type == STRING)
+    {
+        sprintf(dest + strlen(dest), "%s", expr);
+        sprintf(dest + strlen(dest), "pop rbx\n");
+        sprintf(dest + strlen(dest), "mov [%s],rbx\n", ret->identifier);
     }else
     {
         fprintf(stderr, "Unsuported operation %d\n",
@@ -231,6 +187,9 @@ int makeCodeAssignment(char* dest, char* id, char* expr, int typeValue)
 
     return 1;
 }
+
+
+
 
 
 int makeCodeLoad(char* dest, char* id, int ref)
@@ -244,21 +203,12 @@ int makeCodeLoad(char* dest, char* id, int ref)
         return 1;
     }
 
-    // Verifica primeiro tabela de simbolos local
-    SymTableEntry *ret; 
-    ret = findSymTable(&local_table, id);
+    SymTableEntry* ret = findSymTable(&table, id);
 
     if (ret == NULL)
     {
-        
-        // Se não encontrar, verifica a tabela de simbolos global
-        ret = findSymTable(&global_table, id);
-
-        if (ret == NULL){
-            fprintf(stderr, "Error: %s not recognized at line %d\n", id, cont_lines);
-            return 0;
-        }
-
+        fprintf(stderr, "Error: %s not recognized at line %d\n", id, cont_lines);
+        return 0;
     }
 
     if (ret->type == STRING)
@@ -325,20 +275,13 @@ void makeCodeMod(char* dest, char* value2)
 
 int makeCodeComp(char* dest, char* id, char* expr)
 {
-    SymTableEntry *ret; 
-    ret = findSymTable(&local_table, id);
+    SymTableEntry* ret = findSymTable(&table, id);
     dest[0] = '\0';
 
     if (ret == NULL)
     {
-         // Se não encontrar, verifica a tabela de simbolos global
-        ret = findSymTable(&global_table, id);
-
-        if (ret == NULL){
-            fprintf(stderr, "Error: %s not recognized at line %d\n", id, cont_lines);
-            return 0;
-        }
-
+        fprintf(stderr, "Error: %s not recognized at line %d\n", id, cont_lines);
+        return 0;
     }
 
     if (ret->type == STRING)

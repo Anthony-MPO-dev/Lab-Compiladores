@@ -22,11 +22,9 @@ void dumpCodeDeclarationEnd();
 
 int makeCodeRead(char* dest, char *id);
 int makeCodeWrite(char* dest, char *id, int ln);
-int makeCodeWrite0(char* dest, char *value, int ln);
 
-int makeCodeAssignment(char* dest, char* id, char* expr, int typeValue);
+int makeCodeAssignment(char* dest, char* id, char* expr);
 int makeCodeLoad(char* dest, char* id, int ref);
-int makeCodeLoad0(char* dest, char* id, int ref);
 
 void makeCodeAdd(char* dest, char* value);
 void makeCodeSub(char* dest, char* value);
@@ -39,6 +37,8 @@ void makeCodeIf(char* dest, char* expr_code, int expr_jump, char* block_code);
 void makeCodeWhile(char* dest, char* expr_code, int expr_jump, char* block_code);
 void makeCodeIfElse(char* dest, char* expr_code, int expr_jump,
     char* block_code_if, char* block_code_else);
+
+
 
 
 
