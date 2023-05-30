@@ -8,6 +8,7 @@ string empresa;
     string nome;
     float x;
     float y;
+    int z;
     empresa = "UFMT";
 
     write("Escreva seu nome: ");
@@ -26,10 +27,10 @@ string empresa;
         }
         total = total - 1 ;
     }
-
+    write("Sua media eh:");
     write(empresa);
     write(nome);
-    write("Sua media eh:");
+    
     write(media);
     write ("Seu numero eh ");
     if ( impar == 1 ) {

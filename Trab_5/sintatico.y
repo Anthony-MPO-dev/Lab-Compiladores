@@ -170,25 +170,7 @@ comando_leitura: READ '('ID')' ';'  {
 ;
 
 
-comando_escrita:WRITE '('LITERAL_STR')' ';'  {
-		if(flag_global_table)
-			if (!makeCodeWrite0($$.str, $3.str, 0))
-				YYABORT;
-		else
-			if (!makeCodeWrite0($$.str, $3.str, 0))
-				YYABORT;
-	}
-
-	| WRITELN '('LITERAL_STR')' ';'  {
-
-		if(flag_global_table)
-			if (!makeCodeWrite0($$.str, $3.str, 1))
-				YYABORT;
-		else
-			if (!makeCodeWrite0($$.str, $3.str, 1))
-				YYABORT;
-	} 
-	|WRITE '('ID')' ';'  {
+comando_escrita: WRITE '('ID')' ';'  {
 		if(flag_global_table)
 			if (!makeCodeWrite($$.str, $3.str, 0))
 				YYABORT;
@@ -206,6 +188,24 @@ comando_escrita:WRITE '('LITERAL_STR')' ';'  {
 			if (!makeCodeWrite($$.str, $3.str, 1))
 				YYABORT;
 	}
+	|WRITE '('LITERAL_STR')' ';'  {
+		if(flag_global_table)
+			if (!makeCodeWrite0($$.str, $3.str, 0))
+				YYABORT;
+		else
+			if (!makeCodeWrite0($$.str, $3.str, 0))
+				YYABORT;
+	}
+
+	| WRITELN '('LITERAL_STR')' ';'  {
+
+		if(flag_global_table)
+			if (!makeCodeWrite0($$.str, $3.str, 1))
+				YYABORT;
+		else
+			if (!makeCodeWrite0($$.str, $3.str, 1))
+				YYABORT;
+	} 
 ;
 
 

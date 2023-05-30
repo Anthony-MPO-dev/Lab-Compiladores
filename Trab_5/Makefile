@@ -22,4 +22,7 @@ codeGeneration.o: codeGeneration.c
 symbolTable.o: symbolTable.c
 	gcc -c symbolTable.c -g
 
+clean:
+	rm -f *.o comp
+
 	

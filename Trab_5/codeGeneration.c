@@ -26,30 +26,30 @@ void makeCodeDeclaration(char* dest, Type type, char* identifier, char* value)
     if (type == INTEGER)
     {
         if (value == NULL)
-        	sprintf(dest, "%s: dq 0\n", identifier);
+            sprintf(dest, "%s: dq 0\n", identifier);
 
         else
         {
-        	int x = atoi(value);
+            int x = atoi(value);
             sprintf(dest, "%s: dq %d\n", identifier, x);
         }
     }
 
     else if (type == REAL)
     {
-    	if (value == NULL)
+        if (value == NULL)
             sprintf(dest, "%s: dq 0\n", identifier);
 
         else
         {
-          	double x = atof(value);
+            double x = atof(value);
             sprintf(dest, "%s: dq %f\n", identifier, x);
         }
     }
 
     else if (type == STRING)
     {
-    	if (value == NULL)
+        if (value == NULL)
             sprintf(dest, "%s: times %d db 0 \n", identifier, STRING_SIZE);
 
         else
@@ -57,6 +57,12 @@ void makeCodeDeclaration(char* dest, Type type, char* identifier, char* value)
             sprintf(dest, "%s: db %s, 0\n", identifier, value);
         }
     }
+
+    else{
+        fprintf(stderr, "Error[incompatible type]: %s is line %d \n", type, cont_lines);
+        return 0;
+    }
+
 }
 
 
@@ -116,8 +122,9 @@ int makeCodeRead(char* dest, char *id)
 // Codigo para escrita (printf)
 int makeCodeWrite(char* dest, char *id, int ln)
 {
-    SymTableEntry* ret = findSymTable(&local_table,id);
     dest[0] = '\0';
+    SymTableEntry* ret = findSymTable(&local_table,id);
+    
 
     if (ret == NULL)
     {
@@ -162,7 +169,7 @@ int makeCodeWrite0(char* dest, char *value, int ln){
 
     if (ln) sprintf(dest + strlen(dest), "mov rdi,fmt_sln\n");
     else sprintf(dest + strlen(dest), "mov rdi,fmt_s\n");
-    sprintf(dest + strlen(dest), "mov rsi,%s\n", value);
+    sprintf(dest + strlen(dest), "mov rsi, %s\n", value);
     
 
     sprintf(dest + strlen(dest), "mov rax,0\n");
