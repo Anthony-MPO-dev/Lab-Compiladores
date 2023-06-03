@@ -15,6 +15,10 @@ FILE* out_file = NULL;
 SymTable global_table;
 SymTable local_table;
 
+int flag_global_table = 1;
+
+
+
                      // -4    -3    -2     -1    0     1     2    3     4      5
 char jumps[10][4] = {"jnl", "jng", "jne", "jnz", "", "jz", "je", "jg", "jl", "jmp"};
 

@@ -1,0 +1,31 @@
+int a;
+
+{
+
+    float total = 1.0;
+    string nome = "Anthony";
+    int impar = 0;
+
+  
+    
+   
+    
+    string cla ="Ola";
+
+
+
+    while (a > 0)
+    {
+        write(a);
+        a = a - 1;
+
+        if ( impar == 0 ) 
+        {
+            impar = 1 ;
+        }
+ 
+    }
+
+    write(a);
+    
+}

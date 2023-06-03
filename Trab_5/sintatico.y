@@ -10,9 +10,7 @@
     extern SymTable global_table;
 	extern SymTable local_table;
 
-	
-	int flag_global_table;
-	flag_global_table = 1;
+	extern int flag_global_table;
 
 
     char s_decs[256];
@@ -74,60 +72,36 @@ declaracao: declaracao_inteiro { strcpy($$.str, $1.str); }
 
 
 declaracao_inteiro: INT ID '=' NUM_INT ';'  {
-		if(flag_global_table) 
-			addSymTable(&global_table, INTEGER, $2.str, $4.str);
-		else
-			addSymTable(&local_table, INTEGER, $2.str, $4.str);
-		
+		addSymTable(&local_table, INTEGER, $2.str, $4.str);
 		makeCodeDeclaration($$.str, INTEGER, $2.str, $4.str);
 	}
 
 	| INT ID ';'  {
-		if(flag_global_table)
-			addSymTable(&global_table, INTEGER, $2.str, NULL);
-		else
-			addSymTable(&local_table, INTEGER, $2.str, NULL);
-		
+		addSymTable(&local_table, INTEGER, $2.str, NULL);	
 		makeCodeDeclaration($$.str, INTEGER, $2.str, NULL);
 	}
 ;
 
 
 declaracao_float: FLOAT ID '=' NUM_FLOAT ';'  {
-		if(flag_global_table) 
-			addSymTable(&global_table, REAL, $2.str, $4.str);
-		else
-			addSymTable(&local_table, REAL, $2.str, $4.str);
-		
+		addSymTable(&local_table, REAL, $2.str, $4.str);
 		makeCodeDeclaration($$.str, REAL, $2.str, $4.str);
 	}
 
 	| FLOAT ID ';'  {
-		if(flag_global_table)
-			addSymTable(&global_table, REAL, $2.str, NULL);
-		else
-			addSymTable(&local_table, REAL, $2.str, NULL);
-
+		addSymTable(&local_table, REAL, $2.str, NULL);
 		makeCodeDeclaration($$.str, REAL, $2.str, NULL);
 	}
 ;
 
 
 declaracao_string: STR ID '=' LITERAL_STR ';'  {
-		if(flag_global_table)
-			addSymTable(&global_table, STRING, $2.str, $4.str);
-		else
-			addSymTable(&local_table, STRING, $2.str, $4.str);
-		
+		addSymTable(&local_table, STRING, $2.str, $4.str);
 		makeCodeDeclaration($$.str, STRING, $2.str, $4.str);
 	}
 
 	| STR ID ';'  {
-		if(flag_global_table)
-			addSymTable(&global_table, STRING, $2.str, NULL);
-		else
-			addSymTable(&local_table, STRING, $2.str, NULL);
-
+		addSymTable(&local_table, STRING, $2.str, NULL);
 		makeCodeDeclaration($$.str, STRING, $2.str, NULL);
 	}
 ;
@@ -150,7 +124,7 @@ comandos : comando comandos  {
 
 
 comando: declaracao 	  { printf("DECLARACAO Local\n"); }
-	|comando_escrita      { strcpy($$.str, $1.str); }
+	| comando_escrita      	  { strcpy($$.str, $1.str); }
 	| comando_leitura         { strcpy($$.str, $1.str); }
 	| comando_atribuicao      { strcpy($$.str, $1.str); }
 	| comando_se              { strcpy($$.str, $1.str); }
@@ -160,10 +134,6 @@ comando: declaracao 	  { printf("DECLARACAO Local\n"); }
 
 
 comando_leitura: READ '('ID')' ';'  {
-	if(flag_global_table)
-		if (!makeCodeRead($$.str, $3.str))
-				YYABORT;
-	else
 		if (!makeCodeRead($$.str, $3.str))
 				YYABORT;
 	}
@@ -171,88 +141,59 @@ comando_leitura: READ '('ID')' ';'  {
 
 
 comando_escrita: WRITE '('ID')' ';'  {
-		if(flag_global_table)
-			if (!makeCodeWrite($$.str, $3.str, 0))
-				YYABORT;
-		else
-			if (!makeCodeWrite($$.str, $3.str, 0))
-				YYABORT;
+		if (!makeCodeWrite($$.str, $3.str, 0))
+			YYABORT;
+	}
+	|WRITE '('LITERAL_STR')' ';'  {
+		if (!makeCodeWrite0($$.str, $3.str, 0))
+			YYABORT;
 	}
 
 	| WRITELN '('ID')' ';'  {
-
-		if(flag_global_table)
-			if (!makeCodeWrite($$.str, $3.str, 1))
-				YYABORT;
-		else
-			if (!makeCodeWrite($$.str, $3.str, 1))
-				YYABORT;
-	}
-	|WRITE '('LITERAL_STR')' ';'  {
-		if(flag_global_table)
-			if (!makeCodeWrite0($$.str, $3.str, 0))
-				YYABORT;
-		else
-			if (!makeCodeWrite0($$.str, $3.str, 0))
-				YYABORT;
+		if (!makeCodeWrite($$.str, $3.str, 1))
+			YYABORT;
 	}
 
 	| WRITELN '('LITERAL_STR')' ';'  {
-
-		if(flag_global_table)
-			if (!makeCodeWrite0($$.str, $3.str, 1))
-				YYABORT;
-		else
-			if (!makeCodeWrite0($$.str, $3.str, 1))
-				YYABORT;
+		if (!makeCodeWrite0($$.str, $3.str, 1))
+			YYABORT;
 	} 
 ;
 
 
-comando_atribuicao: ID '=' termo ';'  {
-		if (!makeCodeAssignment($$.str, $1.str, $3.str, 0))
-			YYABORT;
-	}
-	| ID '=' expressao_numerica ';'  {
-		
-		if (!makeCodeAssignment($$.str, $1.str, $3.str, 0))
-			YYABORT;
-	}
-	|ID '=' LITERAL_STR ';'  {
-		
+comando_atribuicao: ID '=' LITERAL_STR ';'  
+	{
 		if (!makeCodeAssignment($$.str, $1.str, $3.str, 1))
+			YYABORT;
+	}
+	
+	|ID '=' expressao_numerica ';'  
+	{
+		if (!makeCodeAssignment($$.str, $1.str, $3.str, 0))
 			YYABORT;
 	}
 ;
 
 
-expressao_numerica: termo  {
-
-		strcpy($$.str, $1.str);
-	}
+expressao_numerica: termo  { strcpy($$.str, $1.str); }
 
 	| expressao_numerica '+' expressao_numerica  {
-
 		makeCodeAdd($$.str, $3.str);
 	}
 
-	| expressao_numerica '-' expressao_numerica  {
-		
+	| expressao_numerica '-' expressao_numerica  {	
 		makeCodeSub($$.str, $3.str);
 	}
 
 	| termo '+' fator  {
-
 		makeCodeAdd($$.str, $3.str);
 	}
 
 	| termo '-' fator  {
-
 		makeCodeSub($$.str, $3.str);
 	}
 
 	| termo '*' fator  {
-		
 		// printf("{%s}\n", $$.str);
 		makeCodeMul($1.str, $3.str);
 		strcpy($$.str, $1.str);
@@ -260,12 +201,10 @@ expressao_numerica: termo  {
 	}
 
 	| termo '/' fator  {
-
 		makeCodeDiv($$.str, $3.str);
 	}
 
 	| termo '%' fator  {
-
 		makeCodeMod($$.str, $3.str);
 	}
 ;
@@ -273,17 +212,14 @@ expressao_numerica: termo  {
 
 
 termo: NUM_INT  {
-
 		makeCodeLoad($$.str, $1.str, 0);
 	}
 
 	|NUM_FLOAT  {
-
 		makeCodeLoad($$.str, $1.str, 0);
 	}
 
 	| ID  {
-
 		if (!makeCodeLoad($$.str, $1.str, 1)) 
 			YYABORT;
 
@@ -356,8 +292,8 @@ operador_relacional: '<'   { $$.op = -4; }
 
 void yyerror(char *s)
 {
-   fprintf(stderr, "Error: %s at line %d", s, cont_lines);
-   fprintf(stderr, "\n");
+	fprintf(stderr, "Error: %s at line %d", s, cont_lines);
+	fprintf(stderr, "\n");
 }
 
 

@@ -26,7 +26,6 @@ int makeCodeWrite0(char* dest, char *value, int ln);
 
 int makeCodeAssignment(char* dest, char* id, char* expr, int typeValue);
 int makeCodeLoad(char* dest, char* id, int ref);
-int makeCodeLoad0(char* dest, char* id, int ref);
 
 void makeCodeAdd(char* dest, char* value);
 void makeCodeSub(char* dest, char* value);

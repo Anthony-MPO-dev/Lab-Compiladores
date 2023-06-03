@@ -59,8 +59,7 @@ void makeCodeDeclaration(char* dest, Type type, char* identifier, char* value)
     }
 
     else{
-        fprintf(stderr, "Error[incompatible type]: %s is line %d \n", type, cont_lines);
-        return 0;
+        fprintf(stderr, "Error[incompatible type]: in line %d \n", cont_lines);
     }
 
 }
@@ -110,7 +109,6 @@ int makeCodeRead(char* dest, char *id)
         sprintf(dest + strlen(dest), "mov rsi,%s\n", ret->identifier);
     }
 
-   
     sprintf(dest + strlen(dest), "mov rax,0\n");
     sprintf(dest + strlen(dest), "call scanf\n");
 
@@ -122,7 +120,9 @@ int makeCodeRead(char* dest, char *id)
 // Codigo para escrita (printf)
 int makeCodeWrite(char* dest, char *id, int ln)
 {
+
     dest[0] = '\0';
+
     SymTableEntry* ret = findSymTable(&local_table,id);
     
 
@@ -173,7 +173,7 @@ int makeCodeWrite0(char* dest, char *value, int ln){
     
 
     sprintf(dest + strlen(dest), "mov rax,0\n");
-    sprintf(dest + strlen(dest), "call printf\n");
+    sprintf(dest + strlen(dest), "call printf\n"); 
 
     return 1;
 }
@@ -211,7 +211,7 @@ int makeCodeAssignment(char* dest, char* id, char* expr, int typeValue)
             printf("ATRIBUICAO DE REAL\n");
             sprintf(dest + strlen(dest), "%s", expr);
             sprintf(dest + strlen(dest), "pop rbx\n");
-            sprintf(dest + strlen(dest), "mov [%s],rbx\n", ret->identifier);
+            sprintf(dest + strlen(dest), "movss [%s], xmm0\n", ret->identifier);
         }else{
             fprintf(stderr, "ERROR[Variable type does not match the provided value] on line %d\n",
             cont_lines);
@@ -219,8 +219,8 @@ int makeCodeAssignment(char* dest, char* id, char* expr, int typeValue)
         }
     }else if (typeValue == 1){
         if(ret->type == STRING)
-            {
-            printf("ATRIBUICAO DE LITERAL_STRING\n");
+        {
+            printf("ATRIBUICAO DE STRING\n");
             sprintf(dest + strlen(dest), "%s", expr);
             sprintf(dest + strlen(dest), "pop rbx\n");
             sprintf(dest + strlen(dest), "mov [%s],rbx\n", ret->identifier);
@@ -414,7 +414,8 @@ void makeCodeWhile(char* dest, char* expr_code, int expr_jump, char* block_code)
     
     sprintf(dest + strlen(dest), "%s:\n", loop_label);
     sprintf(dest + strlen(dest), "%s", expr_code);
-    sprintf(dest + strlen(dest), "%s %s\n", jumps[expr_jump + JUMPS_ARRAY_OFFSET],final_label);
+    sprintf(dest + strlen(dest), "%s %s\n", jumps[expr_jump + JUMPS_ARRAY_OFFSET],
+        final_label);
     sprintf(dest + strlen(dest), "%s", block_code);
     sprintf(dest + strlen(dest), "jmp %s\n", loop_label);
     sprintf(dest + strlen(dest), "%s:\n", final_label);

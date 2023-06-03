@@ -30,8 +30,8 @@ string empresa;
     write("Sua media eh:");
     write(empresa);
     write(nome);
-    
     write(media);
+    
     write ("Seu numero eh ");
     if ( impar == 1 ) {
         write( "impar" );

@@ -23,6 +23,4 @@ symbolTable.o: symbolTable.c
 	gcc -c symbolTable.c -g
 
 clean:
-	rm -f *.o comp
-
-	
+	rm -f *.o *.asm comp
