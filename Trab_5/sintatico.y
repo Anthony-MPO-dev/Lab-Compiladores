@@ -3,6 +3,8 @@
     #include <stdio.h>
 	#include "symbolTable.h"
 	#include "codeGeneration.h"
+	#define TRUE 1
+	#define FALSE 0
 
     void yyerror(char*);
     int yylex();
@@ -61,7 +63,8 @@ declaracoes: declaracao declaracoes  {
 		sprintf($$.str + strlen($$.str), "%s", $2.str);
 	}
 
-	| %empty { $$.str[0] = '\0'; }
+	| %empty { $$.str[0] = '\0'; 
+			   flag_global_table = FALSE;}
 ;
 
 
@@ -72,43 +75,72 @@ declaracao: declaracao_inteiro { strcpy($$.str, $1.str); }
 
 
 declaracao_inteiro: INT ID '=' NUM_INT ';'  {
-		addSymTable(&local_table, INTEGER, $2.str, $4.str);
-		makeCodeDeclaration($$.str, INTEGER, $2.str, $4.str);
+		if (flag_global_table == TRUE) {
+			addSymTable(&global_table, INTEGER, $2.str, $4.str);
+			makeCodeDeclaration($$.str, INTEGER, $2.str, $4.str);
+		} else {
+			addSymTable(&local_table, INTEGER, $2.str, $4.str);
+			makeCodeDeclaration($$.str, INTEGER, $2.str, $4.str);
+		}
 	}
 
 	| INT ID ';'  {
-		addSymTable(&local_table, INTEGER, $2.str, NULL);	
-		makeCodeDeclaration($$.str, INTEGER, $2.str, NULL);
+		if (flag_global_table == TRUE) {
+			addSymTable(&global_table, INTEGER, $2.str, NULL);
+			makeCodeDeclaration($$.str, INTEGER, $2.str, NULL);
+		} else {
+			addSymTable(&local_table, INTEGER, $2.str, NULL);
+			makeCodeDeclaration($$.str, INTEGER, $2.str, NULL);
+		}
 	}
 ;
 
 
 declaracao_float: FLOAT ID '=' NUM_FLOAT ';'  {
-		addSymTable(&local_table, REAL, $2.str, $4.str);
-		makeCodeDeclaration($$.str, REAL, $2.str, $4.str);
+		if (flag_global_table == TRUE) {
+			addSymTable(&global_table, REAL, $2.str, $4.str);
+			makeCodeDeclaration($$.str, REAL, $2.str, $4.str);
+		} else {
+			addSymTable(&local_table, REAL, $2.str, $4.str);
+			makeCodeDeclaration($$.str, REAL, $2.str, $4.str);
+		}
 	}
 
 	| FLOAT ID ';'  {
-		addSymTable(&local_table, REAL, $2.str, NULL);
-		makeCodeDeclaration($$.str, REAL, $2.str, NULL);
+		if (flag_global_table == TRUE) {
+			addSymTable(&global_table, REAL, $2.str, NULL);
+			makeCodeDeclaration($$.str, REAL, $2.str, NULL);
+		} else {
+			addSymTable(&local_table, REAL, $2.str, NULL);
+			makeCodeDeclaration($$.str, REAL, $2.str, NULL);
+		}
 	}
 ;
 
 
 declaracao_string: STR ID '=' LITERAL_STR ';'  {
-		addSymTable(&local_table, STRING, $2.str, $4.str);
-		makeCodeDeclaration($$.str, STRING, $2.str, $4.str);
+		if (flag_global_table == TRUE) {
+			addSymTable(&global_table, STRING, $2.str, $4.str);
+			makeCodeDeclaration($$.str, STRING, $2.str, $4.str);
+		} else {
+			addSymTable(&local_table, STRING, $2.str, $4.str);
+			makeCodeDeclaration($$.str, STRING, $2.str, $4.str);
+		}
 	}
 
 	| STR ID ';'  {
-		addSymTable(&local_table, STRING, $2.str, NULL);
-		makeCodeDeclaration($$.str, STRING, $2.str, NULL);
+		if (flag_global_table == TRUE) {
+			addSymTable(&global_table, STRING, $2.str, NULL);
+			makeCodeDeclaration($$.str, STRING, $2.str, NULL);
+		} else {
+			addSymTable(&local_table, STRING, $2.str, NULL);
+			makeCodeDeclaration($$.str, STRING, $2.str, NULL);
+		}
 	}
 ;
 
 
 bloco : '{' comandos '}'  {
-		flag_global_table = 0;
 		strcpy($$.str, $2.str);
 	}
 ;

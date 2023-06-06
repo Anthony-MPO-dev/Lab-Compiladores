@@ -48,7 +48,7 @@ pop rbx
 add rbx,rcx
 push rbx
 pop rbx
-mov [total],rbx
+movss [total], xmm0
 mov rbx,[total]
 push rbx
 mov rbx,2
@@ -59,7 +59,7 @@ xor rdx,rdx
 idiv r8
 push rax
 pop rbx
-mov [media],rbx
+movss [media], xmm0
 mov rbx,0
 push rbx
 pop rbx
@@ -97,17 +97,45 @@ pop rbx
 sub rbx,rcx
 push rbx
 pop rbx
-mov [total],rbx
+movss [total], xmm0
 jmp label2
 label3:
-writewritewritewritewritemov rbx,1
+mov rdi,fmt_s
+mov rsi, "Sua media eh:"
+mov rax,0
+call printf
+mov rdi,fmt_s
+mov rsi,empresa
+mov rax,0
+call printf
+mov rdi,fmt_s
+mov rsi,nome
+mov rax,0
+call printf
+mov rdi,fmt_f
+mov rsi,[media]
+mov rax,0
+call printf
+mov rdi,fmt_s
+mov rsi, "Seu numero eh "
+mov rax,0
+call printf
+mov rbx,1
 push rbx
 pop rcx
 mov rbx, [impar]
 cmp rbx, rcx
 jne label4
-writejmp label5
+mov rdi,fmt_s
+mov rsi, "impar"
+mov rax,0
+call printf
+jmp label5
 label4:
-writelabel5:
+mov rdi,fmt_s
+mov rsi, "par"
+mov rax,0
+call printf
+label5:
 mov rax,0
 ret

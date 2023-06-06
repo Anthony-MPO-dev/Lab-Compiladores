@@ -94,8 +94,9 @@ int main(int argc, char const *argv[])
     fprintf(out_file, "mov rax,0\n");  
     fprintf(out_file, "ret\n");
 
-
+    printf("--------------------Tabela Local--------------------\n");
     printSymTable(&local_table);
+    printf("--------------------Tabela Global--------------------\n");
     printSymTable(&global_table);
 
     fclose(out_file);

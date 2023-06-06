@@ -73,6 +73,8 @@
     #include <stdio.h>
 	#include "symbolTable.h"
 	#include "codeGeneration.h"
+	#define TRUE 1
+	#define FALSE 0
 
     void yyerror(char*);
     int yylex();
@@ -86,7 +88,7 @@
     char s_decs[256];
 
 
-#line 90 "sintatico.tab.c"
+#line 92 "sintatico.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -557,12 +559,12 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,    48,    48,    57,    64,    68,    69,    70,    74,    79,
-      86,    91,    98,   103,   110,   117,   122,   126,   127,   128,
-     129,   130,   131,   132,   136,   143,   147,   152,   157,   164,
-     170,   178,   180,   184,   188,   192,   196,   203,   207,   214,
-     218,   222,   230,   235,   240,   245,   254,   261,   268,   275,
-     283,   284,   285,   286,   287,   288
+       0,    50,    50,    59,    66,    71,    72,    73,    77,    87,
+      99,   109,   121,   131,   143,   149,   154,   158,   159,   160,
+     161,   162,   163,   164,   168,   175,   179,   184,   189,   196,
+     202,   210,   212,   216,   220,   224,   228,   235,   239,   246,
+     250,   254,   262,   267,   272,   277,   286,   293,   300,   307,
+     315,   316,   317,   318,   319,   320
 };
 #endif
 
@@ -1194,437 +1196,467 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* programa: declaracoes bloco  */
-#line 48 "sintatico.y"
+#line 50 "sintatico.y"
                              {
 		
 		fprintf(out_file, "%s", (yyvsp[-1].c).str);
 		dumpCodeDeclarationEnd();
 		fprintf(out_file, "%s", (yyvsp[0].c).str);
 	}
-#line 1205 "sintatico.tab.c"
+#line 1207 "sintatico.tab.c"
     break;
 
   case 3: /* declaracoes: declaracao declaracoes  */
-#line 57 "sintatico.y"
+#line 59 "sintatico.y"
                                      {
 
 		strcpy((yyval.c).str, (yyvsp[-1].c).str);
 		//printf("{%s}\n", $2.str);
 		sprintf((yyval.c).str + strlen((yyval.c).str), "%s", (yyvsp[0].c).str);
 	}
-#line 1216 "sintatico.tab.c"
+#line 1218 "sintatico.tab.c"
     break;
 
   case 4: /* declaracoes: %empty  */
-#line 64 "sintatico.y"
-                 { (yyval.c).str[0] = '\0'; }
-#line 1222 "sintatico.tab.c"
+#line 66 "sintatico.y"
+                 { (yyval.c).str[0] = '\0'; 
+			   flag_global_table = FALSE;}
+#line 1225 "sintatico.tab.c"
     break;
 
   case 5: /* declaracao: declaracao_inteiro  */
-#line 68 "sintatico.y"
+#line 71 "sintatico.y"
                                { strcpy((yyval.c).str, (yyvsp[0].c).str); }
-#line 1228 "sintatico.tab.c"
+#line 1231 "sintatico.tab.c"
     break;
 
   case 6: /* declaracao: declaracao_float  */
-#line 69 "sintatico.y"
+#line 72 "sintatico.y"
                            { strcpy((yyval.c).str, (yyvsp[0].c).str); }
-#line 1234 "sintatico.tab.c"
+#line 1237 "sintatico.tab.c"
     break;
 
   case 7: /* declaracao: declaracao_string  */
-#line 70 "sintatico.y"
+#line 73 "sintatico.y"
                             { strcpy((yyval.c).str, (yyvsp[0].c).str); }
-#line 1240 "sintatico.tab.c"
+#line 1243 "sintatico.tab.c"
     break;
 
   case 8: /* declaracao_inteiro: INT ID '=' NUM_INT ';'  */
-#line 74 "sintatico.y"
+#line 77 "sintatico.y"
                                             {
-		addSymTable(&local_table, INTEGER, (yyvsp[-3].c).str, (yyvsp[-1].c).str);
-		makeCodeDeclaration((yyval.c).str, INTEGER, (yyvsp[-3].c).str, (yyvsp[-1].c).str);
+		if (flag_global_table == TRUE) {
+			addSymTable(&global_table, INTEGER, (yyvsp[-3].c).str, (yyvsp[-1].c).str);
+			makeCodeDeclaration((yyval.c).str, INTEGER, (yyvsp[-3].c).str, (yyvsp[-1].c).str);
+		} else {
+			addSymTable(&local_table, INTEGER, (yyvsp[-3].c).str, (yyvsp[-1].c).str);
+			makeCodeDeclaration((yyval.c).str, INTEGER, (yyvsp[-3].c).str, (yyvsp[-1].c).str);
+		}
 	}
-#line 1249 "sintatico.tab.c"
+#line 1257 "sintatico.tab.c"
     break;
 
   case 9: /* declaracao_inteiro: INT ID ';'  */
-#line 79 "sintatico.y"
+#line 87 "sintatico.y"
                       {
-		addSymTable(&local_table, INTEGER, (yyvsp[-1].c).str, NULL);	
-		makeCodeDeclaration((yyval.c).str, INTEGER, (yyvsp[-1].c).str, NULL);
+		if (flag_global_table == TRUE) {
+			addSymTable(&global_table, INTEGER, (yyvsp[-1].c).str, NULL);
+			makeCodeDeclaration((yyval.c).str, INTEGER, (yyvsp[-1].c).str, NULL);
+		} else {
+			addSymTable(&local_table, INTEGER, (yyvsp[-1].c).str, NULL);
+			makeCodeDeclaration((yyval.c).str, INTEGER, (yyvsp[-1].c).str, NULL);
+		}
 	}
-#line 1258 "sintatico.tab.c"
+#line 1271 "sintatico.tab.c"
     break;
 
   case 10: /* declaracao_float: FLOAT ID '=' NUM_FLOAT ';'  */
-#line 86 "sintatico.y"
+#line 99 "sintatico.y"
                                               {
-		addSymTable(&local_table, REAL, (yyvsp[-3].c).str, (yyvsp[-1].c).str);
-		makeCodeDeclaration((yyval.c).str, REAL, (yyvsp[-3].c).str, (yyvsp[-1].c).str);
-	}
-#line 1267 "sintatico.tab.c"
-    break;
-
-  case 11: /* declaracao_float: FLOAT ID ';'  */
-#line 91 "sintatico.y"
-                        {
-		addSymTable(&local_table, REAL, (yyvsp[-1].c).str, NULL);
-		makeCodeDeclaration((yyval.c).str, REAL, (yyvsp[-1].c).str, NULL);
-	}
-#line 1276 "sintatico.tab.c"
-    break;
-
-  case 12: /* declaracao_string: STR ID '=' LITERAL_STR ';'  */
-#line 98 "sintatico.y"
-                                               {
-		addSymTable(&local_table, STRING, (yyvsp[-3].c).str, (yyvsp[-1].c).str);
-		makeCodeDeclaration((yyval.c).str, STRING, (yyvsp[-3].c).str, (yyvsp[-1].c).str);
+		if (flag_global_table == TRUE) {
+			addSymTable(&global_table, REAL, (yyvsp[-3].c).str, (yyvsp[-1].c).str);
+			makeCodeDeclaration((yyval.c).str, REAL, (yyvsp[-3].c).str, (yyvsp[-1].c).str);
+		} else {
+			addSymTable(&local_table, REAL, (yyvsp[-3].c).str, (yyvsp[-1].c).str);
+			makeCodeDeclaration((yyval.c).str, REAL, (yyvsp[-3].c).str, (yyvsp[-1].c).str);
+		}
 	}
 #line 1285 "sintatico.tab.c"
     break;
 
-  case 13: /* declaracao_string: STR ID ';'  */
-#line 103 "sintatico.y"
-                      {
-		addSymTable(&local_table, STRING, (yyvsp[-1].c).str, NULL);
-		makeCodeDeclaration((yyval.c).str, STRING, (yyvsp[-1].c).str, NULL);
+  case 11: /* declaracao_float: FLOAT ID ';'  */
+#line 109 "sintatico.y"
+                        {
+		if (flag_global_table == TRUE) {
+			addSymTable(&global_table, REAL, (yyvsp[-1].c).str, NULL);
+			makeCodeDeclaration((yyval.c).str, REAL, (yyvsp[-1].c).str, NULL);
+		} else {
+			addSymTable(&local_table, REAL, (yyvsp[-1].c).str, NULL);
+			makeCodeDeclaration((yyval.c).str, REAL, (yyvsp[-1].c).str, NULL);
+		}
 	}
-#line 1294 "sintatico.tab.c"
+#line 1299 "sintatico.tab.c"
+    break;
+
+  case 12: /* declaracao_string: STR ID '=' LITERAL_STR ';'  */
+#line 121 "sintatico.y"
+                                               {
+		if (flag_global_table == TRUE) {
+			addSymTable(&global_table, STRING, (yyvsp[-3].c).str, (yyvsp[-1].c).str);
+			makeCodeDeclaration((yyval.c).str, STRING, (yyvsp[-3].c).str, (yyvsp[-1].c).str);
+		} else {
+			addSymTable(&local_table, STRING, (yyvsp[-3].c).str, (yyvsp[-1].c).str);
+			makeCodeDeclaration((yyval.c).str, STRING, (yyvsp[-3].c).str, (yyvsp[-1].c).str);
+		}
+	}
+#line 1313 "sintatico.tab.c"
+    break;
+
+  case 13: /* declaracao_string: STR ID ';'  */
+#line 131 "sintatico.y"
+                      {
+		if (flag_global_table == TRUE) {
+			addSymTable(&global_table, STRING, (yyvsp[-1].c).str, NULL);
+			makeCodeDeclaration((yyval.c).str, STRING, (yyvsp[-1].c).str, NULL);
+		} else {
+			addSymTable(&local_table, STRING, (yyvsp[-1].c).str, NULL);
+			makeCodeDeclaration((yyval.c).str, STRING, (yyvsp[-1].c).str, NULL);
+		}
+	}
+#line 1327 "sintatico.tab.c"
     break;
 
   case 14: /* bloco: '{' comandos '}'  */
-#line 110 "sintatico.y"
+#line 143 "sintatico.y"
                           {
-		flag_global_table = 0;
 		strcpy((yyval.c).str, (yyvsp[-1].c).str);
 	}
-#line 1303 "sintatico.tab.c"
+#line 1335 "sintatico.tab.c"
     break;
 
   case 15: /* comandos: comando comandos  */
-#line 117 "sintatico.y"
+#line 149 "sintatico.y"
                              {
 		strcpy((yyval.c).str, (yyvsp[-1].c).str);
 		sprintf((yyval.c).str + strlen((yyval.c).str), "%s", (yyvsp[0].c).str);
 	}
-#line 1312 "sintatico.tab.c"
+#line 1344 "sintatico.tab.c"
     break;
 
   case 16: /* comandos: %empty  */
-#line 122 "sintatico.y"
+#line 154 "sintatico.y"
                  { (yyval.c).str[0] = '\0'; }
-#line 1318 "sintatico.tab.c"
+#line 1350 "sintatico.tab.c"
     break;
 
   case 17: /* comando: declaracao  */
-#line 126 "sintatico.y"
+#line 158 "sintatico.y"
                           { printf("DECLARACAO Local\n"); }
-#line 1324 "sintatico.tab.c"
+#line 1356 "sintatico.tab.c"
     break;
 
   case 18: /* comando: comando_escrita  */
-#line 127 "sintatico.y"
+#line 159 "sintatico.y"
                                   { strcpy((yyval.c).str, (yyvsp[0].c).str); }
-#line 1330 "sintatico.tab.c"
+#line 1362 "sintatico.tab.c"
     break;
 
   case 19: /* comando: comando_leitura  */
-#line 128 "sintatico.y"
+#line 160 "sintatico.y"
                                   { strcpy((yyval.c).str, (yyvsp[0].c).str); }
-#line 1336 "sintatico.tab.c"
+#line 1368 "sintatico.tab.c"
     break;
 
   case 20: /* comando: comando_atribuicao  */
-#line 129 "sintatico.y"
+#line 161 "sintatico.y"
                                   { strcpy((yyval.c).str, (yyvsp[0].c).str); }
-#line 1342 "sintatico.tab.c"
+#line 1374 "sintatico.tab.c"
     break;
 
   case 21: /* comando: comando_se  */
-#line 130 "sintatico.y"
+#line 162 "sintatico.y"
                                   { strcpy((yyval.c).str, (yyvsp[0].c).str); }
-#line 1348 "sintatico.tab.c"
+#line 1380 "sintatico.tab.c"
     break;
 
   case 22: /* comando: comando_se_senao  */
-#line 131 "sintatico.y"
+#line 163 "sintatico.y"
                                   { strcpy((yyval.c).str, (yyvsp[0].c).str); }
-#line 1354 "sintatico.tab.c"
+#line 1386 "sintatico.tab.c"
     break;
 
   case 23: /* comando: comando_enquanto  */
-#line 132 "sintatico.y"
+#line 164 "sintatico.y"
                                   { strcpy((yyval.c).str, (yyvsp[0].c).str); }
-#line 1360 "sintatico.tab.c"
+#line 1392 "sintatico.tab.c"
     break;
 
   case 24: /* comando_leitura: READ '(' ID ')' ';'  */
-#line 136 "sintatico.y"
+#line 168 "sintatico.y"
                                     {
 		if (!makeCodeRead((yyval.c).str, (yyvsp[-2].c).str))
 				YYABORT;
 	}
-#line 1369 "sintatico.tab.c"
+#line 1401 "sintatico.tab.c"
     break;
 
   case 25: /* comando_escrita: WRITE '(' ID ')' ';'  */
-#line 143 "sintatico.y"
+#line 175 "sintatico.y"
                                      {
 		if (!makeCodeWrite((yyval.c).str, (yyvsp[-2].c).str, 0))
 			YYABORT;
 	}
-#line 1378 "sintatico.tab.c"
+#line 1410 "sintatico.tab.c"
     break;
 
   case 26: /* comando_escrita: WRITE '(' LITERAL_STR ')' ';'  */
-#line 147 "sintatico.y"
+#line 179 "sintatico.y"
                                       {
 		if (!makeCodeWrite0((yyval.c).str, (yyvsp[-2].c).str, 0))
 			YYABORT;
 	}
-#line 1387 "sintatico.tab.c"
+#line 1419 "sintatico.tab.c"
     break;
 
   case 27: /* comando_escrita: WRITELN '(' ID ')' ';'  */
-#line 152 "sintatico.y"
+#line 184 "sintatico.y"
                                 {
 		if (!makeCodeWrite((yyval.c).str, (yyvsp[-2].c).str, 1))
 			YYABORT;
 	}
-#line 1396 "sintatico.tab.c"
+#line 1428 "sintatico.tab.c"
     break;
 
   case 28: /* comando_escrita: WRITELN '(' LITERAL_STR ')' ';'  */
-#line 157 "sintatico.y"
+#line 189 "sintatico.y"
                                          {
 		if (!makeCodeWrite0((yyval.c).str, (yyvsp[-2].c).str, 1))
 			YYABORT;
 	}
-#line 1405 "sintatico.tab.c"
+#line 1437 "sintatico.tab.c"
     break;
 
   case 29: /* comando_atribuicao: ID '=' LITERAL_STR ';'  */
-#line 165 "sintatico.y"
+#line 197 "sintatico.y"
         {
 		if (!makeCodeAssignment((yyval.c).str, (yyvsp[-3].c).str, (yyvsp[-1].c).str, 1))
 			YYABORT;
 	}
-#line 1414 "sintatico.tab.c"
+#line 1446 "sintatico.tab.c"
     break;
 
   case 30: /* comando_atribuicao: ID '=' expressao_numerica ';'  */
-#line 171 "sintatico.y"
+#line 203 "sintatico.y"
         {
 		if (!makeCodeAssignment((yyval.c).str, (yyvsp[-3].c).str, (yyvsp[-1].c).str, 0))
 			YYABORT;
 	}
-#line 1423 "sintatico.tab.c"
+#line 1455 "sintatico.tab.c"
     break;
 
   case 31: /* expressao_numerica: termo  */
-#line 178 "sintatico.y"
+#line 210 "sintatico.y"
                            { strcpy((yyval.c).str, (yyvsp[0].c).str); }
-#line 1429 "sintatico.tab.c"
-    break;
-
-  case 32: /* expressao_numerica: expressao_numerica '+' expressao_numerica  */
-#line 180 "sintatico.y"
-                                                     {
-		makeCodeAdd((yyval.c).str, (yyvsp[0].c).str);
-	}
-#line 1437 "sintatico.tab.c"
-    break;
-
-  case 33: /* expressao_numerica: expressao_numerica '-' expressao_numerica  */
-#line 184 "sintatico.y"
-                                                     {	
-		makeCodeSub((yyval.c).str, (yyvsp[0].c).str);
-	}
-#line 1445 "sintatico.tab.c"
-    break;
-
-  case 34: /* expressao_numerica: termo '+' fator  */
-#line 188 "sintatico.y"
-                           {
-		makeCodeAdd((yyval.c).str, (yyvsp[0].c).str);
-	}
-#line 1453 "sintatico.tab.c"
-    break;
-
-  case 35: /* expressao_numerica: termo '-' fator  */
-#line 192 "sintatico.y"
-                           {
-		makeCodeSub((yyval.c).str, (yyvsp[0].c).str);
-	}
 #line 1461 "sintatico.tab.c"
     break;
 
+  case 32: /* expressao_numerica: expressao_numerica '+' expressao_numerica  */
+#line 212 "sintatico.y"
+                                                     {
+		makeCodeAdd((yyval.c).str, (yyvsp[0].c).str);
+	}
+#line 1469 "sintatico.tab.c"
+    break;
+
+  case 33: /* expressao_numerica: expressao_numerica '-' expressao_numerica  */
+#line 216 "sintatico.y"
+                                                     {	
+		makeCodeSub((yyval.c).str, (yyvsp[0].c).str);
+	}
+#line 1477 "sintatico.tab.c"
+    break;
+
+  case 34: /* expressao_numerica: termo '+' fator  */
+#line 220 "sintatico.y"
+                           {
+		makeCodeAdd((yyval.c).str, (yyvsp[0].c).str);
+	}
+#line 1485 "sintatico.tab.c"
+    break;
+
+  case 35: /* expressao_numerica: termo '-' fator  */
+#line 224 "sintatico.y"
+                           {
+		makeCodeSub((yyval.c).str, (yyvsp[0].c).str);
+	}
+#line 1493 "sintatico.tab.c"
+    break;
+
   case 36: /* expressao_numerica: termo '*' fator  */
-#line 196 "sintatico.y"
+#line 228 "sintatico.y"
                            {
 		// printf("{%s}\n", $$.str);
 		makeCodeMul((yyvsp[-2].c).str, (yyvsp[0].c).str);
 		strcpy((yyval.c).str, (yyvsp[-2].c).str);
 
 	}
-#line 1472 "sintatico.tab.c"
-    break;
-
-  case 37: /* expressao_numerica: termo '/' fator  */
-#line 203 "sintatico.y"
-                           {
-		makeCodeDiv((yyval.c).str, (yyvsp[0].c).str);
-	}
-#line 1480 "sintatico.tab.c"
-    break;
-
-  case 38: /* expressao_numerica: termo '%' fator  */
-#line 207 "sintatico.y"
-                           {
-		makeCodeMod((yyval.c).str, (yyvsp[0].c).str);
-	}
-#line 1488 "sintatico.tab.c"
-    break;
-
-  case 39: /* termo: NUM_INT  */
-#line 214 "sintatico.y"
-                {
-		makeCodeLoad((yyval.c).str, (yyvsp[0].c).str, 0);
-	}
-#line 1496 "sintatico.tab.c"
-    break;
-
-  case 40: /* termo: NUM_FLOAT  */
-#line 218 "sintatico.y"
-                    {
-		makeCodeLoad((yyval.c).str, (yyvsp[0].c).str, 0);
-	}
 #line 1504 "sintatico.tab.c"
     break;
 
+  case 37: /* expressao_numerica: termo '/' fator  */
+#line 235 "sintatico.y"
+                           {
+		makeCodeDiv((yyval.c).str, (yyvsp[0].c).str);
+	}
+#line 1512 "sintatico.tab.c"
+    break;
+
+  case 38: /* expressao_numerica: termo '%' fator  */
+#line 239 "sintatico.y"
+                           {
+		makeCodeMod((yyval.c).str, (yyvsp[0].c).str);
+	}
+#line 1520 "sintatico.tab.c"
+    break;
+
+  case 39: /* termo: NUM_INT  */
+#line 246 "sintatico.y"
+                {
+		makeCodeLoad((yyval.c).str, (yyvsp[0].c).str, 0);
+	}
+#line 1528 "sintatico.tab.c"
+    break;
+
+  case 40: /* termo: NUM_FLOAT  */
+#line 250 "sintatico.y"
+                    {
+		makeCodeLoad((yyval.c).str, (yyvsp[0].c).str, 0);
+	}
+#line 1536 "sintatico.tab.c"
+    break;
+
   case 41: /* termo: ID  */
-#line 222 "sintatico.y"
+#line 254 "sintatico.y"
               {
 		if (!makeCodeLoad((yyval.c).str, (yyvsp[0].c).str, 1)) 
 			YYABORT;
 
 	}
-#line 1514 "sintatico.tab.c"
+#line 1546 "sintatico.tab.c"
     break;
 
   case 42: /* fator: NUM_INT  */
-#line 230 "sintatico.y"
+#line 262 "sintatico.y"
                 {
 		
 		makeCodeLoad((yyval.c).str, (yyvsp[0].c).str, 0);
 	}
-#line 1523 "sintatico.tab.c"
+#line 1555 "sintatico.tab.c"
     break;
 
   case 43: /* fator: NUM_FLOAT  */
-#line 235 "sintatico.y"
+#line 267 "sintatico.y"
                     {
 
 		makeCodeLoad((yyval.c).str, (yyvsp[0].c).str, 0);
 	}
-#line 1532 "sintatico.tab.c"
+#line 1564 "sintatico.tab.c"
     break;
 
   case 44: /* fator: ID  */
-#line 240 "sintatico.y"
+#line 272 "sintatico.y"
               {
 
 		makeCodeLoad((yyval.c).str, (yyvsp[0].c).str, 1);
 	}
-#line 1541 "sintatico.tab.c"
+#line 1573 "sintatico.tab.c"
     break;
 
   case 45: /* fator: '(' expressao_numerica ')'  */
-#line 245 "sintatico.y"
+#line 277 "sintatico.y"
                                       {
 		
 		strcpy((yyval.c).str, (yyvsp[-1].c).str);
 	}
-#line 1550 "sintatico.tab.c"
+#line 1582 "sintatico.tab.c"
     break;
 
   case 46: /* comando_se: IF '(' expressao_booleana ')' bloco  */
-#line 254 "sintatico.y"
+#line 286 "sintatico.y"
                                                  {
 		
 		makeCodeIf((yyval.c).str, (yyvsp[-2].c).str, (yyvsp[-2].c).op, (yyvsp[0].c).str);
 	}
-#line 1559 "sintatico.tab.c"
+#line 1591 "sintatico.tab.c"
     break;
 
   case 47: /* comando_se_senao: IF '(' expressao_booleana ')' bloco ELSE bloco  */
-#line 261 "sintatico.y"
+#line 293 "sintatico.y"
                                                                   {
 
 		makeCodeIfElse((yyval.c).str, (yyvsp[-4].c).str, (yyvsp[-4].c).op, (yyvsp[-2].c).str, (yyvsp[0].c).str);
 	}
-#line 1568 "sintatico.tab.c"
+#line 1600 "sintatico.tab.c"
     break;
 
   case 48: /* comando_enquanto: WHILE '(' expressao_booleana ')' bloco  */
-#line 268 "sintatico.y"
+#line 300 "sintatico.y"
                                                           {
 
 		makeCodeWhile((yyval.c).str, (yyvsp[-2].c).str, (yyvsp[-2].c).op, (yyvsp[0].c).str);
 	}
-#line 1577 "sintatico.tab.c"
+#line 1609 "sintatico.tab.c"
     break;
 
   case 49: /* expressao_booleana: ID operador_relacional expressao_numerica  */
-#line 275 "sintatico.y"
+#line 307 "sintatico.y"
                                                                {
 		
 		(yyval.c).op = (yyvsp[-1].c).op;
 		if (!makeCodeComp((yyval.c).str, (yyvsp[-2].c).str, (yyvsp[0].c).str))
 			YYABORT;
 	}
-#line 1588 "sintatico.tab.c"
+#line 1620 "sintatico.tab.c"
     break;
 
   case 50: /* operador_relacional: '<'  */
-#line 283 "sintatico.y"
+#line 315 "sintatico.y"
                            { (yyval.c).op = -4; }
-#line 1594 "sintatico.tab.c"
+#line 1626 "sintatico.tab.c"
     break;
 
   case 51: /* operador_relacional: '>'  */
-#line 284 "sintatico.y"
+#line 316 "sintatico.y"
                                { (yyval.c).op = -3; }
-#line 1600 "sintatico.tab.c"
+#line 1632 "sintatico.tab.c"
     break;
 
   case 52: /* operador_relacional: LE  */
-#line 285 "sintatico.y"
+#line 317 "sintatico.y"
                                { (yyval.c).op = 3; }
-#line 1606 "sintatico.tab.c"
+#line 1638 "sintatico.tab.c"
     break;
 
   case 53: /* operador_relacional: GE  */
-#line 286 "sintatico.y"
+#line 318 "sintatico.y"
                                { (yyval.c).op = 4; }
-#line 1612 "sintatico.tab.c"
+#line 1644 "sintatico.tab.c"
     break;
 
   case 54: /* operador_relacional: EQ  */
-#line 287 "sintatico.y"
+#line 319 "sintatico.y"
                                { (yyval.c).op = -2; }
-#line 1618 "sintatico.tab.c"
+#line 1650 "sintatico.tab.c"
     break;
 
   case 55: /* operador_relacional: NE  */
-#line 288 "sintatico.y"
+#line 320 "sintatico.y"
                                { (yyval.c).op = 2; }
-#line 1624 "sintatico.tab.c"
+#line 1656 "sintatico.tab.c"
     break;
 
 
-#line 1628 "sintatico.tab.c"
+#line 1660 "sintatico.tab.c"
 
       default: break;
     }
@@ -1817,7 +1849,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 291 "sintatico.y"
+#line 323 "sintatico.y"
 
 
 void yyerror(char *s)
