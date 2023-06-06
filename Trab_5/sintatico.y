@@ -27,9 +27,6 @@
 	} c;
 }
 
-
-
-
 %type <c> programa declaracoes declaracao bloco
 %type <c> declaracao_inteiro declaracao_float declaracao_string
 %type <c> comandos comando comando_escrita comando_leitura comando_atribuicao

@@ -87,7 +87,7 @@ digit [0-9]
 	return ID;
 }
 
-["]{letter}({letter}|{digit}|[-;:={}+*()<>/%]|[ ]|_)*["] {
+["]{letter}({letter}|{digit}|[.-;:={}+*()<>/%]|[ ]|_)*["] {
 	printf("Lexic: literal_string found\n");
 	strcpy(yylval.c.str, yytext);
 	return LITERAL_STR;

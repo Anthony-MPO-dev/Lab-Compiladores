@@ -1,7 +1,3 @@
-
-
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -16,8 +12,6 @@ SymTable global_table;
 SymTable local_table;
 
 int flag_global_table = 1;
-
-
 
                      // -4    -3    -2     -1    0     1     2    3     4      5
 char jumps[10][4] = {"jnl", "jng", "jne", "jnz", "", "jz", "je", "jg", "jl", "jmp"};
@@ -93,12 +87,11 @@ int main(int argc, char const *argv[])
 
     fprintf(out_file, "mov rax,0\n");  
     fprintf(out_file, "ret\n");
-
-    printf("--------------------Tabela Local--------------------\n");
-    printSymTable(&local_table);
     printf("--------------------Tabela Global--------------------\n");
     printSymTable(&global_table);
-
+    printf("--------------------Tabela Local--------------------\n");
+    printSymTable(&local_table);
+   
     fclose(out_file);
     fclose(stdin);
 

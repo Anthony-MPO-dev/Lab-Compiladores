@@ -1,5 +1,3 @@
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -35,6 +33,7 @@ void makeCodeDeclaration(char* dest, Type type, char* identifier, char* value)
         }
     }
 
+    // armazena tipo real 
     else if (type == REAL)
     {
         if (value == NULL)
@@ -47,6 +46,7 @@ void makeCodeDeclaration(char* dest, Type type, char* identifier, char* value)
         }
     }
 
+    // armazena tipo string
     else if (type == STRING)
     {
         if (value == NULL)
@@ -91,18 +91,21 @@ int makeCodeRead(char* dest, char *id)
         }
     }
 
+    // Leitura de Inteiros 
     if (ret->type == INTEGER)
     {
         sprintf(dest + strlen(dest), "mov rdi,fmt_d\n");
         sprintf(dest + strlen(dest), "mov rsi,%s\n", ret->identifier);
     }
 
+    // Leitura de Reais
     else if (ret->type == REAL)
     {
         sprintf(dest + strlen(dest), "mov rdi,fmt_f\n");
         sprintf(dest + strlen(dest), "mov rsi,%s\n", ret->identifier);
     }
 
+    // Leitura de Strings
     else
     {
         sprintf(dest + strlen(dest), "mov rdi,fmt_s\n");
@@ -137,6 +140,7 @@ int makeCodeWrite(char* dest, char *id, int ln)
         }
     }
 
+    // Escrita de Inteiros
     if (ret->type == INTEGER)
     {
         if (ln) sprintf(dest + strlen(dest), "mov rdi,fmt_dln\n");
@@ -144,6 +148,7 @@ int makeCodeWrite(char* dest, char *id, int ln)
         sprintf(dest + strlen(dest), "mov rsi,[%s]\n", ret->identifier);
     }
 
+    // Escrita de Reais
     else if (ret->type == REAL)
     {
         if (ln) sprintf(dest + strlen(dest), "mov rdi,fmt_fln\n");
@@ -151,6 +156,7 @@ int makeCodeWrite(char* dest, char *id, int ln)
         sprintf(dest + strlen(dest), "mov rsi,[%s]\n", ret->identifier);
     }
 
+    // Escrita de Strings
     else
     {
         if (ln) sprintf(dest + strlen(dest), "mov rdi,fmt_sln\n");
@@ -167,11 +173,12 @@ int makeCodeWrite(char* dest, char *id, int ln)
 int makeCodeWrite0(char* dest, char *value, int ln){
     dest[0] = '\0';
 
+    // Caso de Strings
     if (ln) sprintf(dest + strlen(dest), "mov rdi,fmt_sln\n");
     else sprintf(dest + strlen(dest), "mov rdi,fmt_s\n");
     sprintf(dest + strlen(dest), "mov rsi, %s\n", value);
     
-
+    // Caso de Inteiros
     sprintf(dest + strlen(dest), "mov rax,0\n");
     sprintf(dest + strlen(dest), "call printf\n"); 
 
